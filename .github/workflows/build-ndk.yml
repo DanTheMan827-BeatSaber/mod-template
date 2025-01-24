@@ -175,10 +175,10 @@ jobs:
 
     steps:
     - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: output/
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: output/
 
     - name: Upload .qmod
       id: upload_file_qmod
