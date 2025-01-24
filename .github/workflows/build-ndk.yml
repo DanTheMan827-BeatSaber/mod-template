@@ -216,7 +216,7 @@ jobs:
     - name: Make PR to mod repository
       if: steps.check-token.outputs.TOKEN_SET == 'true'
       id: qmod-release
-      uses: QuestPackageManager/qmod-repo-publish-action@main
+      uses: DanTheMan827/qmod-repo-publish-action@main
       with:
         token: ${{ secrets.BSQMODS_TOKEN }}
         qmod_url:
