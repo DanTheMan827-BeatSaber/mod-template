@@ -206,6 +206,7 @@ jobs:
 
     # Check if secrets.BSQMODS_TOKEN is set before continuing
     - name: Check if BSQMODS_TOKEN is set
+      id: check-token
       run: |
         if [ -z "${{ secrets.BSQMODS_TOKEN }}" ]; then
           echo "TOKEN_SET=false" | tee -a "$GITHUB_OUTPUT"
@@ -214,7 +215,7 @@ jobs:
         fi
 
     - name: Make PR to mod repository
-      if: steps.check.outputs.TOKEN_SET == 'true'
+      if: steps.check-token.outputs.TOKEN_SET == 'true'
       id: qmod-release
       uses: QuestPackageManager/qmod-repo-publish-action@main
       with:
