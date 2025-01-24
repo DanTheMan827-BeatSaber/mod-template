@@ -69,10 +69,10 @@ jobs:
           QMOD_OUTPUT_PATH="$(jq -r '.workspace.qmodOutput' qpm.json)"
         fi
 
-        echo "name=${NAME}" | tee -a $GITHUB_OUTPUT
-        echo "id=${ID}" | tee -a $GITHUB_OUTPUT
+        echo "name=${NAME}" | tee -a "$GITHUB_OUTPUT"
+        echo "id=${ID}" | tee -a "$GITHUB_OUTPUT"
         echo "override_so_name=${OVERRIDE_SO_NAME}" | tee -a "$GITHUB_OUTPUT"
-        echo "qmod_output_path=${QMOD_OUTPUT_PATH}" | tee -a $GITHUB_OUTPUT
+        echo "qmod_output_path=${QMOD_OUTPUT_PATH}" | tee -a "$GITHUB_OUTPUT"
 
   build:
     runs-on: ubuntu-latest
@@ -97,11 +97,21 @@ jobs:
         cat "${GITHUB_WORKSPACE}/ndkpath.txt"
 
     - name: Extract version
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.version != ''
       id: version
       run: |
-        echo "TAG=${GITHUB_REF#refs/tags/}" >> ${GITHUB_OUTPUT}
-        echo "VERSION=${GITHUB_REF#refs/tags/v}" >> ${GITHUB_OUTPUT}
+        if [ "${{ github.event.inputs.version }}" != "" ]; then
+          FULL_VERSION="${{ github.event.inputs.version }}"
+          VERSION="${FULL_VERSION%%[-+]*}"
+        else
+          TAG="${GITHUB_REF#refs/tags/}"
+          FULL_VERSION="${GITHUB_REF#refs/tags/v}"
+          VERSION="${FULL_VERSION%%[-+]*}"
+        fi
+
+        echo "TAG=$TAG" | tee -a "$GITHUB_OUTPUT"
+        echo "VERSION=$VERSION" | tee -a "$GITHUB_OUTPUT"
+        echo "FULL_VERSION=$FULL_VERSION" | tee -a "$GITHUB_OUTPUT"
 
     - name: Update version in qpm.json, qpm.shared.json, and mod.template.json
       if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.version != ''
@@ -165,7 +175,6 @@ jobs:
         path: ${{ needs.qpm_info.outputs.qmod_output_path }}
         if-no-files-found: error
 
-    # if we had a tag, we should make a release
     - name: Upload release .qmod
       if: startsWith(github.ref, 'refs/tags/v')
       id: upload_file_qmod
