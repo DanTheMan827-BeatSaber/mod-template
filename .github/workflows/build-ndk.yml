@@ -53,7 +53,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install jq
-      run: sudo apt-get install -y jq
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
 
     - name: Read info from qpm.json
       id: read_qpm_info
@@ -88,8 +90,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt-get update
-        apt-get install -y tee
+        sudo apt-get update
+        sudo apt-get install -y tee
 
     - uses: seanmiddleditch/gha-setup-ninja@v3
 
