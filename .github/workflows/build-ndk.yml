@@ -54,9 +54,8 @@ jobs:
 
     - uses: seanmiddleditch/gha-setup-ninja@v3
 
-    - name: Setup NDK
+    - uses: DanTheMan827-BeatSaber/common-stuff/.github/workflows/setup-ndk.yml@main
       id: setup-ndk
-      uses: DanTheMan827-BeatSaber/common-stuff/.github/workflows/setup-ndk.yml@main
 
     - name: Create ndkpath.txt
       run: |
