@@ -6,6 +6,7 @@ on:
       version:
         description: 'Version'
         required: false
+
   push:
     tags:
       - "v*"
@@ -191,6 +192,8 @@ jobs:
     - name: Upload .so artifacts
       if: startsWith(github.ref, 'refs/tags/v')
       id: upload_file_so
+      permissions:
+        contents: write
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.event.inputs.version }}
