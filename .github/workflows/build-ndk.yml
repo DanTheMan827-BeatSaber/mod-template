@@ -1,0 +1,181 @@
+name: NDK build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: false
+  push:
+    tags:
+      - "v*"
+    branches:
+      - 'master'
+      - 'main'
+      - 'dev/*'
+      - 'feat/*'
+      - 'fix/*'
+    paths-ignore:
+      - '**.yml'
+      - '!.github/workflows/build-ndk.yml'
+      - '**.json'
+      - '!qpm.json'
+      - '!qpm.shared.json'
+      - '!mod.template.json'
+      - '**.txt'
+      - '!CMakeLists.txt'
+      - '**.ps1'
+      - '!build.ps1'
+      - '!createqmod.ps1'
+      - '**.md'
+      - '.gitignore'
+  pull_request:
+    branches:
+        - 'master'
+        - 'main'
+        - 'dev/*'
+        - 'feat/*'
+        - 'fix/*'
+
+env:
+    module_id: "MyTemplateModId"
+    qmod_name: "MyTemplateModName"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      name: Checkout
+      with:
+        submodules: true
+        lfs: true
+
+    - uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Setup NDK
+      id: setup-ndk
+      uses: DanTheMan827-BeatSaber/common-stuff/.github/workflows/setup-ndk.yml@main
+
+    - name: Create ndkpath.txt
+      run: |
+        echo "${{ steps.setup-ndk.outputs.ndk-path }}" > "${GITHUB_WORKSPACE}/ndkpath.txt"
+        cat "${GITHUB_WORKSPACE}/ndkpath.txt"
+
+    - name: Extract version
+      if: startsWith(github.ref, 'refs/tags/v')
+      id: version
+      run: |
+        echo "TAG=${GITHUB_REF#refs/tags/}" >> ${GITHUB_OUTPUT}
+        echo "VERSION=${GITHUB_REF#refs/tags/v}" >> ${GITHUB_OUTPUT}
+
+    - name: Update version in qpm.json, qpm.shared.json, and mod.template.json
+      if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.version != ''
+      run: |
+        # Update qpm.json
+        if [ -f qpm.json ]; then
+          MODIFIED_JSON="$(jq --arg version "$VERSION" '.info.version = $version' qpm.json)"
+          echo "$MODIFIED_JSON" > qpm.json
+        fi
+
+        # Update qpm.shared.json if it exists
+        if [ -f qpm.shared.json ]; then
+          MODIFIED_JSON="$(jq --arg version "$VERSION" '.config.info.version = $version' qpm.shared.json)"
+          echo "$MODIFIED_JSON" > qpm.shared.json
+        fi
+
+        # Update mod.template.json if it exists
+        if [ -f mod.template.json ]; then
+          MODIFIED_JSON="$(jq --arg version "$FULL_VERSION" '.version = $version' mod.template.json)"
+          echo "$MODIFIED_JSON" > mod.template.json
+        fi
+      env:
+        VERSION: ${{ steps.version.outputs.VERSION }}
+        FULL_VERSION: ${{ steps.version.outputs.FULL_VERSION }}
+
+    - name: Setup qpm
+      uses: Fernthedev/qpm-action@main
+      with:
+        workflow_token: ${{ secrets.GITHUB_TOKEN }}
+        restore: true
+        cache: true
+        publish: false
+
+    - name: Build & Create Qmod
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        qpm s qmod
+
+    - name: Get Library Name
+      id: libname
+      run: |
+        cd ./build/
+        pattern="lib${module_id}*.so"
+        files=( $pattern )
+        echo "NAME=${files[0]}" >> ${GITHUB_OUTPUT}
+
+    - name: Rename debug artifact
+      run: |
+        mv "./build/debug/${{ steps.libname.outputs.NAME }}" "./build/debug_${{ steps.libname.outputs.NAME }}"
+
+    - name: Upload release artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.libname.outputs.NAME }}
+        path: ./build/${{ steps.libname.outputs.NAME }}
+        if-no-files-found: error
+
+    - name: Upload debug artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug_${{ steps.libname.outputs.NAME }}
+        path: ./build/debug_${{ steps.libname.outputs.NAME }}
+        if-no-files-found: error
+
+    - name: Upload qmod artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{env.qmod_name}}.qmod
+        path: ./${{ env.qmod_name }}.qmod
+        if-no-files-found: error
+
+    # if we had a tag, we should make a release
+    - name: Upload release .qmod
+      if: startsWith(github.ref, 'refs/tags/v')
+      id: upload_file_qmod
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        draft: false
+        generate_release_notes: true
+        files: |
+          ./${{ env.qmod_name }}.qmod
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload .so artifacts
+      if: startsWith(github.ref, 'refs/tags/v')
+      id: upload_file_so
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        files: |
+          ./build/${{ steps.libname.outputs.NAME }}
+          ./build/debug_${{ steps.libname.outputs.NAME }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Make PR to mod repo
+      if: startsWith(github.ref, 'refs/tags/v')
+      continue-on-error: true
+      id: qmod-release
+      uses: QuestPackageManager/qmod-repo-publish-action@main
+      with:
+        token: ${{ secrets.BSQMODS_TOKEN }}
+        qmod_url:
+          ${{
+          fromJSON(steps.upload_file_qmod.outputs.assets)[0].browser_download_url
+          }}
+        qmod_repo_owner: 'QuestPackageManager'
+        qmod_repo_name: 'bsqmods'
