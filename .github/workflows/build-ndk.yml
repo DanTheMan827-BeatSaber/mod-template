@@ -161,7 +161,7 @@ jobs:
     - name: Upload qmod artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ needs.qpm_info.outputs.qmod_output_path }}
+        name: Release QMOD
         path: ${{ needs.qpm_info.outputs.qmod_output_path }}
         if-no-files-found: error
 
