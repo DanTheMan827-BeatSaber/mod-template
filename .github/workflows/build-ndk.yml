@@ -151,9 +151,10 @@ jobs:
         cd ${GITHUB_WORKSPACE}
         qpm s qmod
 
-    - name: Rename debug artifact
+    - name: Rename build artifacts
       run: |
-        mv "./build/debug/${{ needs.qpm_info.outputs.override_so_name }}" "./build/debug_${{ needs.qpm_info.outputs.override_so_name }}"
+        mv "./build/debug/${{ needs.qpm_info.outputs.override_so_name }}" "./debug_${{ needs.qpm_info.outputs.override_so_name }}"
+        mv "./build/${{ needs.qpm_info.outputs.override_so_name }}" "./${{ needs.qpm_info.outputs.override_so_name }}"
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
@@ -161,8 +162,8 @@ jobs:
         name: build-artifacts
         if-no-files-found: error
         path: |
-          ./build/${{ needs.qpm_info.outputs.override_so_name }}
-          ./build/debug_${{ needs.qpm_info.outputs.override_so_name }}
+          ./${{ needs.qpm_info.outputs.override_so_name }}
+          ./debug_${{ needs.qpm_info.outputs.override_so_name }}
           ${{ needs.qpm_info.outputs.qmod_output_path }}
 
   release:
