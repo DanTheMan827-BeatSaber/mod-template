@@ -69,10 +69,10 @@ jobs:
           QMOD_OUTPUT_PATH="$(jq -r '.workspace.qmodOutput' qpm.json)"
         fi
 
-        echo "name=${NAME}" >> $GITHUB_OUTPUT
-        echo "id=${ID}" >> $GITHUB_OUTPUT
-        echo "override_so_name=${OVERRIDE_SO_NAME}" >> $GITHUB_OUTPUT
-        echo "qmod_output_path=${QMOD_OUTPUT_PATH}" >> $GITHUB_OUTPUT
+        echo "name=${NAME}" | tee -a $GITHUB_OUTPUT
+        echo "id=${ID}" | tee -a $GITHUB_OUTPUT
+        echo "override_so_name=${OVERRIDE_SO_NAME}" | tee -a "$GITHUB_OUTPUT"
+        echo "qmod_output_path=${QMOD_OUTPUT_PATH}" | tee -a $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-latest
