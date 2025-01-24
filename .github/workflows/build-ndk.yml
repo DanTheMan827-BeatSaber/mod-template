@@ -160,7 +160,7 @@ jobs:
       with:
         name: build-artifacts
         if-no-files-found: error
-        files: |
+        path: |
           ./build/${{ needs.qpm_info.outputs.override_so_name }}
           ./build/debug_${{ needs.qpm_info.outputs.override_so_name }}
           ${{ needs.qpm_info.outputs.qmod_output_path }}
