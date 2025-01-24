@@ -220,8 +220,7 @@ jobs:
       with:
         app-id: ${{ secrets.APP_ID }}
         private-key: ${{ secrets.APP_PRIVATE_KEY }}
-        owner: dantheman827
-        repositories: bsqmods
+        owner: ${{ github.repository_owner }}
 
     - name: Make PR to mod repository
       if: steps.check-app.outputs.SECRETS_SET == 'true'
