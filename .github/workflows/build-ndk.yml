@@ -86,6 +86,11 @@ jobs:
         submodules: true
         lfs: true
 
+    - name: Install dependencies
+      run: |
+        apt-get update
+        apt-get install -y tee
+
     - uses: seanmiddleditch/gha-setup-ninja@v3
 
     - name: Setup NDK
