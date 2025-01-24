@@ -38,9 +38,6 @@ on:
         - 'feat/*'
         - 'fix/*'
 
-permissions:
-  contents: write
-
 jobs:
   qpm_info:
     runs-on: ubuntu-latest
@@ -172,6 +169,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
 
     steps:
     - name: Download build artifacts
@@ -194,8 +193,6 @@ jobs:
 
     - name: Upload .so artifacts
       id: upload_file_so
-      permissions:
-        contents: write
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.event.inputs.version }}
