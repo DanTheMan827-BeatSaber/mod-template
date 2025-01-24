@@ -207,10 +207,10 @@ jobs:
     # Check if secrets.BSQMODS_TOKEN is set before continuing
     - name: Check if BSQMODS_TOKEN is set
       run: |
-        if [ ! -z "${{ secrets.BSQMODS_TOKEN }}" ]; then
-          echo "TOKEN_SET=true" | tee -a "$GITHUB_OUTPUT"
-        else
+        if [ -z "${{ secrets.BSQMODS_TOKEN }}" ]; then
           echo "TOKEN_SET=false" | tee -a "$GITHUB_OUTPUT"
+        else
+          echo "TOKEN_SET=true" | tee -a "$GITHUB_OUTPUT"
         fi
 
     - name: Make PR to mod repository
