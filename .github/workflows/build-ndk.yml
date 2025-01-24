@@ -87,6 +87,10 @@ jobs:
 
     - uses: seanmiddleditch/gha-setup-ninja@v3
 
+    - name: Setup NDK
+      uses: DanTheMan827-BeatSaber/setup-ndk@main
+      id: setup-ndk
+
     - name: Create ndkpath.txt
       run: |
         echo "${{ steps.setup-ndk.outputs.ndk-path }}" > "${GITHUB_WORKSPACE}/ndkpath.txt"
@@ -130,10 +134,6 @@ jobs:
         restore: true
         cache: true
         publish: false
-
-    - name: Setup NDK
-      uses: DanTheMan827-BeatSaber/setup-ndk@main
-      id: setup-ndk
 
     - name: Build & Create Qmod
       run: |
