@@ -204,30 +204,21 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # Check if needed secrets are set
-    - name: Check if APP_ID and APP_PRIVATE_KEY are set
-      id: check-app
+    - name: Check if BSQMODS_TOKEN is set
+      id: check-token
       run: |
-        if [ -z "${{ secrets.APP_ID }}" ] || [ -z "${{ secrets.APP_PRIVATE_KEY }}" ]; then
-          echo "SECRETS_SET=false" | tee -a "$GITHUB_OUTPUT"
+        if [ -z "${{ secrets.BSQMODS_TOKEN }}" ]; then
+          echo "TOKEN_SET=false" | tee -a "$GITHUB_OUTPUT"
         else
-          echo "SECRETS_SET=true" | tee -a "$GITHUB_OUTPUT"
+          echo "TOKEN_SET=true" | tee -a "$GITHUB_OUTPUT"
         fi
 
-    - uses: actions/create-github-app-token@v1
-      if: steps.check-app.outputs.SECRETS_SET == 'true'
-      id: generate-token
-      with:
-        app-id: ${{ secrets.APP_ID }}
-        private-key: ${{ secrets.APP_PRIVATE_KEY }}
-        owner: ${{ github.repository_owner }}
-
     - name: Make PR to mod repository
-      if: steps.check-app.outputs.SECRETS_SET == 'true'
+      if: steps.check-token.outputs.TOKEN_SET == 'true'
       id: qmod-release
-      uses: QuestPackageManager/qmod-repo-publish-action@main
+      uses: DanTheMan827/qmod-repo-publish-action@main
       with:
-        token: ${{ steps.generate-token.outputs.token }}
+        token: ${{ secrets.BSQMODS_TOKEN }}
         qmod_url:
           ${{
           fromJSON(steps.upload_file_qmod.outputs.assets)[0].browser_download_url
