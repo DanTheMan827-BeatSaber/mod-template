@@ -44,8 +44,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    - uses: DanTheMan827-BeatSaber/common-stuff/.github/workflows/setup-ndk.yml@main
-      id: setup-ndk
 
     steps:
     - uses: actions/checkout@v4
@@ -56,7 +54,9 @@ jobs:
 
     - uses: seanmiddleditch/gha-setup-ninja@v3
 
-
+    - name: Setup NDK
+      uses: DanTheMan827-BeatSaber/common-stuff/.github/actions/setup-ndk.yml@main
+      id: setup-ndk
 
     - name: Create ndkpath.txt
       run: |
