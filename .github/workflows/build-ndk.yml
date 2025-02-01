@@ -141,7 +141,7 @@ jobs:
 
     - name: Resolve the package NDK version
       run: |
-        qpm ndk resolve
+        qpm ndk resolve -d
 
     - name: Build & Create Qmod
       run: |
