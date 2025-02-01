@@ -16,20 +16,6 @@ on:
       - 'dev/*'
       - 'feat/*'
       - 'fix/*'
-    paths-ignore:
-      - '**.yml'
-      - '!.github/workflows/build-ndk.yml'
-      - '**.json'
-      - '!qpm.json'
-      - '!qpm.shared.json'
-      - '!mod.template.json'
-      - '**.txt'
-      - '!CMakeLists.txt'
-      - '**.ps1'
-      - '!build.ps1'
-      - '!createqmod.ps1'
-      - '**.md'
-      - '.gitignore'
   pull_request:
     branches:
         - 'master'
@@ -138,6 +124,12 @@ jobs:
         restore: true
         cache: true
         publish: false
+
+    - name: Cache NDK
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/QPM-RS/ndk/android-ndk-r27c/
+        key: ${{ runner.os }}-qpm-ndk-${{ hashFiles('qpm.shared.json') }}
 
     - name: Resolve the package NDK version
       run: |
