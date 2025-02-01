@@ -138,7 +138,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/
-        key: ${{ runner.os }}-qpm-ndk-${{ needs.qpm_info.outputs.ndk }}
+        key: "${{ runner.os }} QPM NDK: ${{ needs.qpm_info.outputs.ndk }}"
 
     - name: Resolve the package NDK version
       run: |
@@ -149,7 +149,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/
-        key: ${{ runner.os }}-qpm-ndk-${{ needs.qpm_info.outputs.ndk }}
+        key: "${{ runner.os }} QPM NDK: ${{ needs.qpm_info.outputs.ndk }}"
 
     - name: Build & Create Qmod
       run: |
