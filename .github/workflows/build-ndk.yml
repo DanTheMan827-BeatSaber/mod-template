@@ -133,7 +133,7 @@ jobs:
         cache: true
         publish: false
 
-    - name: Cache NDK
+    - name: Restore NDK Cache
       id: cache-ndk
       uses: actions/cache/restore@v4
       with:
@@ -144,7 +144,7 @@ jobs:
       run: |
         qpm ndk resolve -d
 
-    - name: Save NDK
+    - name: Save NDK Cache
       if: steps.cache-ndk.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
