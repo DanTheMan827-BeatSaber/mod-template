@@ -134,14 +134,22 @@ jobs:
         publish: false
 
     - name: Cache NDK
-      uses: actions/cache@v4
+      id: cache-ndk
+      uses: actions/cache/restore@v4
       with:
-        path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/android-ndk-r27c/
+        path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/
         key: ${{ runner.os }}-qpm-ndk-${{ needs.qpm_info.outputs.ndk }}
 
     - name: Resolve the package NDK version
       run: |
         qpm ndk resolve -d
+
+    - name: Save NDK
+      if: steps.cache-ndk.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/
+        key: ${{ runner.os }}-qpm-ndk-${{ needs.qpm_info.outputs.ndk }}
 
     - name: Build & Create Qmod
       run: |
