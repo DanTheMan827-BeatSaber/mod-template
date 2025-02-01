@@ -132,7 +132,7 @@ jobs:
     - name: Cache NDK
       uses: actions/cache@v4
       with:
-        path: ~/.local/share/QPM-RS/ndk/android-ndk-r27c/
+        path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/android-ndk-r27c/
         key: ${{ runner.os }}-qpm-ndk-${{ needs.qpm_info.outputs.ndk }}
 
     - name: Resolve the package NDK version
