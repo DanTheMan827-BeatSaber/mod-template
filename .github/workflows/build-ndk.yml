@@ -65,7 +65,7 @@ jobs:
         echo "id=${ID}" | tee -a "$GITHUB_OUTPUT"
         echo "override_so_name=${OVERRIDE_SO_NAME}" | tee -a "$GITHUB_OUTPUT"
         echo "qmod_output_path=${QMOD_OUTPUT_PATH}" | tee -a "$GITHUB_OUTPUT"
-        echo "ndk=${ndk}" | tee -a "$GITHUB_OUTPUT"
+        echo "ndk=${NDK}" | tee -a "$GITHUB_OUTPUT"
 
   build:
     runs-on: ubuntu-latest
@@ -79,6 +79,10 @@ jobs:
         lfs: true
 
     - uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Get home path
+      run: |
+        echo "HOME=$HOME" | tee -a "$GITHUB_ENV"
 
     - name: Extract version
       if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.version != ''
