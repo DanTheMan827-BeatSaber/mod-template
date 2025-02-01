@@ -60,6 +60,7 @@
           "pwsh ./scripts/pull-tombstone.ps1"
         ]
       },
+      "ndk": "^27.0.0",
       "qmodIncludeDirs": [
         "./build",
         "./extern/libs"
@@ -69,8 +70,8 @@
     },
     "dependencies": [
       {
-        "id": "beatsaber-hook",
-        "versionRange": "^5.1.9",
+        "id": "paper",
+        "versionRange": "^3.7.0",
         "additionalData": {}
       },
       {
@@ -79,40 +80,20 @@
         "additionalData": {}
       },
       {
+        "id": "beatsaber-hook",
+        "versionRange": "^5.1.9",
+        "additionalData": {}
+      },
+      {
         "id": "scotland2",
         "versionRange": "^0.1.6",
         "additionalData": {
           "includeQmod": false
         }
-      },
-      {
-        "id": "paper",
-        "versionRange": "^3.7.0",
-        "additionalData": {}
       }
     ]
   },
   "restoredDependencies": [
-    {
-      "dependency": {
-        "id": "paper",
-        "versionRange": "=3.7.0",
-        "additionalData": {
-          "soLink": "https://github.com/Fernthedev/paperlog/releases/download/v3.7.0/libpaperlog.so",
-          "debugSoLink": "https://github.com/Fernthedev/paperlog/releases/download/v3.7.0/debug_libpaperlog.so",
-          "overrideSoName": "libpaperlog.so",
-          "modLink": "https://github.com/Fernthedev/paperlog/releases/download/v3.7.0/paperlog.qmod",
-          "branchName": "version/v3_7_0",
-          "compileOptions": {
-            "systemIncludes": [
-              "shared/utfcpp/source"
-            ]
-          },
-          "cmake": false
-        }
-      },
-      "version": "3.7.0"
-    },
     {
       "dependency": {
         "id": "bs-cordl",
@@ -135,6 +116,26 @@
         }
       },
       "version": "3700.0.0"
+    },
+    {
+      "dependency": {
+        "id": "paper",
+        "versionRange": "=3.7.0",
+        "additionalData": {
+          "soLink": "https://github.com/Fernthedev/paperlog/releases/download/v3.7.0/libpaperlog.so",
+          "debugSoLink": "https://github.com/Fernthedev/paperlog/releases/download/v3.7.0/debug_libpaperlog.so",
+          "overrideSoName": "libpaperlog.so",
+          "modLink": "https://github.com/Fernthedev/paperlog/releases/download/v3.7.0/paperlog.qmod",
+          "branchName": "version/v3_7_0",
+          "compileOptions": {
+            "systemIncludes": [
+              "shared/utfcpp/source"
+            ]
+          },
+          "cmake": false
+        }
+      },
+      "version": "3.7.0"
     },
     {
       "dependency": {

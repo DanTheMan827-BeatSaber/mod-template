@@ -1,3 +1,4 @@
+#include "Hooking.hpp"
 #include "Logger.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-functions.hpp"
 #include "main.hpp"
@@ -5,9 +6,10 @@
 #include "scotland2/shared/modloader.h"
 
 /// @brief Called at the early stages of game loading
-/// @param info
+/// @param info The mod info.  Update this with your mod's info.
 /// @return
 MOD_EXPORT_FUNC void setup(CModInfo& info) {
+    // Convert the mod info to a C struct and set that as the modloader info.
     info = modInfo.to_c();
 
     Logger.info("Completed setup!");
@@ -16,5 +18,9 @@ MOD_EXPORT_FUNC void setup(CModInfo& info) {
 /// @brief Called later on in the game loading - a good time to install function hooks
 /// @return
 MOD_EXPORT_FUNC void late_load() {
+    // Initialize il2cpp functions
     il2cpp_functions::Init();
+
+    // Install deferred hooks
+    INSTALL_DEFERRED_HOOKS();
 }
