@@ -126,30 +126,12 @@ jobs:
         FULL_VERSION: ${{ steps.version.outputs.FULL_VERSION }}
 
     - name: Setup qpm
-      uses: Fernthedev/qpm-action@main
+      uses: dantheman827/qpm-action@ndk-resolve
       with:
         workflow_token: ${{ secrets.GITHUB_TOKEN }}
         restore: true
+        resolve_ndk: true
         cache: true
-        publish: false
-
-    - name: Restore NDK Cache
-      id: cache-ndk
-      uses: actions/cache/restore@v4
-      with:
-        path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/
-        key: "${{ runner.os }} QPM NDK: ${{ needs.qpm_info.outputs.ndk }}"
-
-    - name: Resolve the package NDK version
-      run: |
-        qpm ndk resolve -d
-
-    - name: Save NDK Cache
-      if: steps.cache-ndk.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        path: ${{ env.HOME }}/.local/share/QPM-RS/ndk/
-        key: "${{ runner.os }} QPM NDK: ${{ needs.qpm_info.outputs.ndk }}"
 
     - name: Build & Create Qmod
       run: |
