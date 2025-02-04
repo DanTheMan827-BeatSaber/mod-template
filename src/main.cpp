@@ -15,12 +15,23 @@ MOD_EXPORT_FUNC void setup(CModInfo& info) {
     Logger.info("Completed setup!");
 }
 
-/// @brief Called later on in the game loading - a good time to install function hooks
+/// @brief Called early on in the game loading
 /// @return
-MOD_EXPORT_FUNC void late_load() {
+MOD_EXPORT_FUNC void load() {
     // Initialize il2cpp functions
     il2cpp_functions::Init();
 
-    // Install deferred hooks
-    INSTALL_DEFERRED_HOOKS();
+    // install early hooks
+    Logger.info("Installing early hooks");
+    INSTALL_EARLY_HOOKS();
+    Logger.info("Finished installing early hooks");
+}
+
+/// @brief Called later on in the game loading - a good time to install function hooks
+/// @return
+MOD_EXPORT_FUNC void late_load() {
+    // Install late hooks
+    Logger.info("Installing late hooks");
+    INSTALL_LATE_HOOKS();
+    Logger.info("Finished installing late hooks");
 }
