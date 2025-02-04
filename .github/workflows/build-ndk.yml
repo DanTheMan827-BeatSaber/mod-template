@@ -126,7 +126,7 @@ jobs:
         FULL_VERSION: ${{ steps.version.outputs.FULL_VERSION }}
 
     - name: Setup qpm
-      uses: dantheman827/qpm-action@ndk-resolve
+      uses: fernthedev/qpm-action@v1
       with:
         workflow_token: ${{ secrets.GITHUB_TOKEN }}
         restore: true
