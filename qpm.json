@@ -44,8 +44,8 @@
         "pwsh ./scripts/start-logging.ps1"
       ],
       "qmod": [
-        "pwsh ./scripts/build.ps1",
-        "pwsh ./scripts/createqmod.ps1"
+        "qpm s build",
+        "qpm qmod zip"
       ],
       "restart": [
         "pwsh ./scripts/restart-game.ps1"
@@ -69,18 +69,18 @@
   },
   "dependencies": [
     {
-      "id": "paper",
-      "versionRange": "^3.7.0",
+      "id": "paper2_scotland2",
+      "versionRange": "^4.5.0",
       "additionalData": {}
     },
     {
       "id": "bs-cordl",
-      "versionRange": "3700.*",
+      "versionRange": "4010.*",
       "additionalData": {}
     },
     {
       "id": "beatsaber-hook",
-      "versionRange": "^5.1.9",
+      "versionRange": "^6.3.0",
       "additionalData": {}
     },
     {
