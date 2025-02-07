@@ -37,6 +37,7 @@ jobs:
         uses: fernthedev/qpm-action@v1
         with:
           workflow_token: ${{ secrets.GITHUB_TOKEN }}
+          cache: false
           restore: false
           resolve_ndk: false
 
