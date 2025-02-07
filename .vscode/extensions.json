@@ -3,6 +3,7 @@
         "llvm-vs-code-extensions.vscode-clangd",
         "twxs.cmake",
         "ms-vscode.cmake-tools",
-        "ms-vscode.powershell"
+        "ms-vscode.powershell",
+        "github.vscode-github-actions"
     ]
 }

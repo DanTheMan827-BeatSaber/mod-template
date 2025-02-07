@@ -1,3 +1,10 @@
+param (
+    [string]$ModId,
+    [string]$ModName,
+    [string]$ModAuthor,
+    [string]$ModDescription
+)
+
 function Prompt-For-Input($prompt, $allowSpaces = $true) {
     do {
         $input = Read-Host $prompt
@@ -14,18 +21,42 @@ function Prompt-For-Input($prompt, $allowSpaces = $true) {
     return $input
 }
 
-# Prompt the user for the Mod ID, Mod Name, Mod Author, and Mod Description.
-$modId = Prompt-For-Input "Enter the Mod ID" $false
-$modName = Prompt-For-Input "Enter the Mod Name"
-$modAuthor = Prompt-For-Input "Enter the Mod Author"
-$modDescription = Prompt-For-Input "Enter the Mod Description"
+# Trim whitespace from all parameters
+if ($ModId) {
+    $ModId = $ModId.Trim()
+    # Replace any spaces in the ModId with '-'
+    $ModId = $ModId -replace ' ', '-'
+}
+if ($ModName) {
+    $ModName = $ModName.Trim()
+}
+if ($ModAuthor) {
+    $ModAuthor = $ModAuthor.Trim()
+}
+if ($ModDescription) {
+    $ModDescription = $ModDescription.Trim()
+}
+
+# Check if parameters are provided, if not prompt the user for input
+if (-not $ModId) {
+    $ModId = Prompt-For-Input "Enter the Mod ID" $false
+}
+if (-not $ModName) {
+    $ModName = Prompt-For-Input "Enter the Mod Name"
+}
+if (-not $ModAuthor) {
+    $ModAuthor = Prompt-For-Input "Enter the Mod Author"
+}
+if (-not $ModDescription) {
+    $ModDescription = Prompt-For-Input "Enter the Mod Description"
+}
 
 # Store the values in variables.
 $templateVariables = @{
-    "MyTemplateModId" = $modId
-    "MyTemplateModName" = $modName
-    "MyTemplateModAuthor" = $modAuthor
-    "MyTemplateModDescription" = $modDescription
+    "MyTemplateModId" = $ModId
+    "MyTemplateModName" = $ModName
+    "MyTemplateModAuthor" = $ModAuthor
+    "MyTemplateModDescription" = $ModDescription
 }
 
 # List of files to be processed
@@ -67,12 +98,10 @@ foreach ($file in $filesToProcess) {
 Write-Host "Configuration complete, deleting script file."
 
 # Delete includes/Hooking.hpp if it exists
-$hookingHeaderPath = Join-Path -Path $PSScriptRoot -ChildPath (Join-Path -Path "include" -ChildPath "Hooking.hpp")
+Remove-Item -Path "$PSScriptRoot/include/Hooking.hpp" -ErrorAction SilentlyContinue
 
-if (Test-Path -Path $hookingHeaderPath) {
-    Write-Output "Deleting Hooking.hpp"
-    Remove-Item -Path $hookingHeaderPath
-}
+# Delete the workflow file
+Remove-Item -Path "$PSScriptRoot/.github/workflows/configure-template.yml" -ErrorAction SilentlyContinue
 
 # Delete the script file
 Remove-Item -Path $MyInvocation.MyCommand.Path

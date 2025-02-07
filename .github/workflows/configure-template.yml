@@ -1,0 +1,53 @@
+name: Configure Template
+
+on:
+  workflow_dispatch:
+    inputs:
+      ModId:
+        description: "Enter the Mod ID"
+        required: true
+        type: string
+      ModName:
+        description: "Enter the Mod Name"
+        required: true
+        type: string
+      ModAuthor:
+        description: "Enter the Mod Author"
+        required: true
+        type: string
+      ModDescription:
+        description: "Enter the Mod Description"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run configure-template.ps1
+        shell: pwsh
+        run: |
+          ./configure-template.ps1 -ModId "${{ inputs.ModId }}" -ModName "${{ inputs.ModName }}" -ModAuthor "${{ inputs.ModAuthor }}" -ModDescription "${{ inputs.ModDescription }}"
+
+      - name: Commit changes
+        run: |
+          git add -A
+          git commit -m "Configure template variables"
+
+      - name: Push changes
+        run: |
+          git push

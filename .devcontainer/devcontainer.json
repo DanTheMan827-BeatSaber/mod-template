@@ -22,7 +22,8 @@
         "llvm-vs-code-extensions.vscode-clangd",
         "twxs.cmake",
         "ms-vscode.cmake-tools",
-        "ms-vscode.PowerShell"
+        "ms-vscode.PowerShell",
+        "github.vscode-github-actions"
       ]
     }
   }
