@@ -61,12 +61,14 @@
           "pwsh ./scripts/pull-tombstone.ps1"
         ]
       },
-      "ndk": "^27.0.0",
+      "ndk": "^27.2.12479018",
       "qmodIncludeDirs": [
         "./build",
         "./extern/libs"
       ],
-      "qmodIncludeFiles": [],
+      "qmodIncludeFiles": [
+        "./cover.png"
+      ],
       "qmodOutput": "./MyTemplateModName.qmod"
     },
     "dependencies": [

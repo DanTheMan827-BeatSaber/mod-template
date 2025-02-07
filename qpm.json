@@ -1,8 +1,8 @@
 {
   "$schema": "https://github.com/QuestPackageManager/QPM.Package/raw/refs/heads/main/qpm.schema.json",
+  "version": "0.4.0",
   "sharedDir": "shared",
   "dependenciesDir": "extern",
-  "version": "0.4.0",
   "info": {
     "name": "MyTemplateModName",
     "id": "MyTemplateModId",
@@ -25,9 +25,22 @@
         "qpm s clean",
         "qpm s qmod"
       ],
+      "copy": [
+        "pwsh ./scripts/copy.ps1 $0:?"
+      ],
       "deepclean": [
         "pwsh ./scripts/build.ps1 -clean -skipBuild",
         "qpm clear"
+      ],
+      "logcat": [
+        "pwsh ./scripts/start-logging.ps1"
+      ],
+      "make-hooking": [
+        "pwsh ./common-stuff/scripts/make-hooking.ps1"
+      ],
+      "qmod": [
+        "qpm s build",
+        "qpm qmod zip"
       ],
       "rebuild": [
         "qpm s deepclean",
@@ -37,16 +50,6 @@
         "qpm s deepclean",
         "qpm s qmod"
       ],
-      "copy": [
-        "pwsh ./scripts/copy.ps1 $0:?"
-      ],
-      "logcat": [
-        "pwsh ./scripts/start-logging.ps1"
-      ],
-      "qmod": [
-        "qpm s build",
-        "qpm qmod zip"
-      ],
       "restart": [
         "pwsh ./scripts/restart-game.ps1"
       ],
@@ -55,15 +58,15 @@
       ],
       "tomb": [
         "pwsh ./scripts/pull-tombstone.ps1"
-      ],
-      "make-hooking": [
-        "pwsh ./common-stuff/scripts/make-hooking.ps1"
       ]
     },
     "ndk": "^27.0.0",
     "qmodIncludeDirs": [
       "./build",
       "./extern/libs"
+    ],
+    "qmodIncludeFiles": [
+      "./cover.png"
     ],
     "qmodOutput": "./MyTemplateModName.qmod"
   },
