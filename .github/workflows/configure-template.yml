@@ -35,7 +35,9 @@ jobs:
 
       - name: Setup qpm
         uses: fernthedev/qpm-action@v1
-      
+        with:
+          workflow_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
