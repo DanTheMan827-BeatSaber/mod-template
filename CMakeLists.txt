@@ -16,6 +16,9 @@ add_compile_options(-frtti -fexceptions -fvisibility=hidden -fPIE -fPIC -Wno-inv
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/utils.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/qpm.cmake)
 
+set(GIT_HEADER_FILE ${CMAKE_CURRENT_LIST_DIR}/include/git-info.h)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/git.cmake)
+
 if(${CMAKE_BUILD_TYPE} STREQUAL "RELEASE" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
         # Better optimizations
         add_compile_options(-O3)
