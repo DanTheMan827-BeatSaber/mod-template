@@ -37,6 +37,8 @@ function(prepare_git_info)
         string(STRIP "${GIT_EXACT_TAG}" GIT_EXACT_TAG)
     endif()
 
+    set(VERSION_SEPARATOR "+")
+
     # compute GIT_VERSION
     if(GIT_TAG STREQUAL "")
         set(GIT_VERSION "${PACKAGE_VERSION}")
@@ -46,11 +48,12 @@ function(prepare_git_info)
     endif()
 
     if(GIT_EXACT_TAG STREQUAL "")
-        set(GIT_VERSION "${GIT_VERSION}-${GIT_COMMIT}")
+        set(GIT_VERSION "${GIT_VERSION}${VERSION_SEPARATOR}${GIT_COMMIT}")
+        set(VERSION_SEPARATOR "-")
     endif()
 
     if(GIT_MODIFIED)
-        set(GIT_VERSION "${GIT_VERSION}-dirty")
+        set(GIT_VERSION "${GIT_VERSION}${VERSION_SEPARATOR}dirty")
     endif()
 
     set(GIT_USER "${GIT_USER}" PARENT_SCOPE)
