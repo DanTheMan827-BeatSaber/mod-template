@@ -18,6 +18,7 @@ function(prepare_git_info)
         set(GIT_TAG "")
         set(GIT_EXACT_TAG "")
         set(GIT_MODIFIED 0)
+        set(GIT_VERSION "")
     else()
         # get git info
         execute_process(COMMAND ${GIT_EXECUTABLE} config user.name OUTPUT_VARIABLE GIT_USER ERROR_QUIET)
@@ -36,6 +37,22 @@ function(prepare_git_info)
         string(STRIP "${GIT_EXACT_TAG}" GIT_EXACT_TAG)
     endif()
 
+    # compute GIT_VERSION
+    if(GIT_TAG STREQUAL "")
+        set(GIT_VERSION "${PACKAGE_VERSION}")
+    else()
+        string(SUBSTRING "${GIT_TAG}" 1 -1 GIT_TAG_SUB)
+        string(REGEX MATCH "^[^+-]*" GIT_VERSION "${GIT_TAG_SUB}")
+    endif()
+
+    if(GIT_EXACT_TAG STREQUAL "")
+        set(GIT_VERSION "${GIT_VERSION}-${GIT_COMMIT}")
+    endif()
+
+    if(GIT_MODIFIED)
+        set(GIT_VERSION "${GIT_VERSION}-dirty")
+    endif()
+
     set(GIT_USER "${GIT_USER}" PARENT_SCOPE)
     set(GIT_BRANCH "${GIT_BRANCH}" PARENT_SCOPE)
     set(GIT_COMMIT "${GIT_COMMIT}" PARENT_SCOPE)
@@ -43,6 +60,7 @@ function(prepare_git_info)
     set(GIT_TAG "${GIT_TAG}" PARENT_SCOPE)
     set(GIT_EXACT_TAG "${GIT_EXACT_TAG}" PARENT_SCOPE)
     set(GIT_MODIFIED ${GIT_MODIFIED} PARENT_SCOPE)
+    set(GIT_VERSION "${GIT_VERSION}" PARENT_SCOPE)
 
     message(STATUS "GIT_USER: ${GIT_USER}")
     message(STATUS "GIT_BRANCH: ${GIT_BRANCH}")
@@ -51,6 +69,7 @@ function(prepare_git_info)
     message(STATUS "GIT_TAG: ${GIT_TAG}")
     message(STATUS "GIT_EXACT_TAG: ${GIT_EXACT_TAG}")
     message(STATUS "GIT_MODIFIED: ${GIT_MODIFIED}")
+    message(STATUS "GIT_VERSION: ${GIT_VERSION}")
 
     if(DEFINED GIT_HEADER_FILE)
         # set git defines in header file
@@ -62,6 +81,7 @@ function(prepare_git_info)
         #define GIT_TAG \"${GIT_TAG}\"
         #define GIT_EXACT_TAG \"${GIT_EXACT_TAG}\"
         #define GIT_MODIFIED ${GIT_MODIFIED}
+        #define GIT_VERSION \"${GIT_VERSION}\"
         ")
 
         # only update the header file if the contents have changed
@@ -70,9 +90,9 @@ function(prepare_git_info)
         else()
             set(CURRENT_GIT_HEADER_CONTENT "")
         endif()
-        
+
         file(RELATIVE_PATH REL_GIT_HEADER_FILE ${CMAKE_SOURCE_DIR} ${GIT_HEADER_FILE})
-        
+
         if(NOT "${GIT_HEADER_CONTENT}" STREQUAL "${CURRENT_GIT_HEADER_CONTENT}")
             message(STATUS "${REL_GIT_HEADER_FILE} needs to be updated.")
             file(WRITE ${GIT_HEADER_FILE} "${GIT_HEADER_CONTENT}")
@@ -81,7 +101,7 @@ function(prepare_git_info)
         endif()
     else()
         message(WARNING "CMake variable GIT_HEADER_FILE not defined, using compile definitions. This is not recommended.")
-        
+
         # set git defines globally
         add_compile_definitions(
             GIT_USER="${GIT_USER}"
@@ -91,6 +111,7 @@ function(prepare_git_info)
             GIT_TAG="${GIT_TAG}"
             GIT_EXACT_TAG="${GIT_EXACT_TAG}"
             GIT_MODIFIED=${GIT_MODIFIED}
+            GIT_VERSION="${GIT_VERSION}"
         )
     endif()
 endfunction()
