@@ -136,6 +136,8 @@ jobs:
     - name: Build & Create Qmod
       run: |
         qpm s qmod
+      env:
+        GITHUB_WORKFLOW_RUN: "true"
 
     - name: Rename build artifacts
       run: |
