@@ -53,9 +53,9 @@ if (-not $ModDescription) {
 
 # Store the values in variables.
 $templateVariables = @{
-    "MyTemplateModId" = $ModId
-    "MyTemplateModName" = $ModName
-    "MyTemplateModAuthor" = $ModAuthor
+    "MyTemplateModId"          = $ModId
+    "MyTemplateModName"        = $ModName
+    "MyTemplateModAuthor"      = $ModAuthor
     "MyTemplateModDescription" = $ModDescription
 }
 

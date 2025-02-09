@@ -2,26 +2,26 @@
 # It supports various logging options including self, all, custom patterns, and file output.
 
 Param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $self,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $all,
 
-    [Parameter(Mandatory=$false)]
-    [String] $custom="",
+    [Parameter(Mandatory = $false)]
+    [String] $custom = "",
 
-    [Parameter(Mandatory=$false)]
-    [String] $file="",
+    [Parameter(Mandatory = $false)]
+    [String] $file = "",
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $help,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $excludeHeader,
 
-    [Parameter(Mandatory=$false)]
-    [String] $packageName="com.beatgames.beatsaber"
+    [Parameter(Mandatory = $false)]
+    [String] $packageName = "com.beatgames.beatsaber"
 )
 
 # Display help information if requested

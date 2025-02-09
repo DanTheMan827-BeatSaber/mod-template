@@ -2,32 +2,32 @@
 # It also starts Beat Saber and optionally logs the output.
 
 Param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $clean,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $log,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $useDebug,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $self,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $all,
 
-    [Parameter(Mandatory=$false)]
-    [String] $custom="",
+    [Parameter(Mandatory = $false)]
+    [String] $custom = "",
 
-    [Parameter(Mandatory=$false)]
-    [String] $file="",
+    [Parameter(Mandatory = $false)]
+    [String] $file = "",
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [Switch] $help,
 
-    [Parameter(Mandatory=$false)]
-    [String] $packageName="com.beatgames.beatsaber"
+    [Parameter(Mandatory = $false)]
+    [String] $packageName = "com.beatgames.beatsaber"
 )
 
 # Display help information if requested
@@ -66,7 +66,8 @@ $modJson = Get-Content "./mod.json" -Raw | ConvertFrom-Json
 foreach ($fileName in $modJson.modFiles) {
     if ($useDebug -eq $true) {
         & adb push "build/debug/$fileName" "/sdcard/ModData/$packageName/Modloader/early_mods/$fileName"
-    } else {
+    }
+    else {
         & adb push "build/$fileName" "/sdcard/ModData/$packageName/Modloader/early_mods/$fileName"
     }
 }
@@ -74,7 +75,8 @@ foreach ($fileName in $modJson.modFiles) {
 foreach ($fileName in $modJson.lateModFiles) {
     if ($useDebug -eq $true) {
         & adb push "build/debug/$fileName" "/sdcard/ModData/$packageName/Modloader/mods/$fileName"
-    } else {
+    }
+    else {
         & adb push "build/$fileName" "/sdcard/ModData/$packageName/Modloader/mods/$fileName"
     }
 }

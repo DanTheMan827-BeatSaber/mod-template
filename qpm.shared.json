@@ -73,18 +73,18 @@
     },
     "dependencies": [
       {
-        "id": "paper2_scotland2",
-        "versionRange": "^4.5.0",
+        "id": "beatsaber-hook",
+        "versionRange": "^6.3.0",
         "additionalData": {}
       },
       {
         "id": "bs-cordl",
-        "versionRange": "4010.*",
+        "versionRange": "4020.*",
         "additionalData": {}
       },
       {
-        "id": "beatsaber-hook",
-        "versionRange": "^6.3.0",
+        "id": "paper2_scotland2",
+        "versionRange": "^4.5.0",
         "additionalData": {}
       },
       {
@@ -100,10 +100,10 @@
     {
       "dependency": {
         "id": "bs-cordl",
-        "versionRange": "=4010.0.0",
+        "versionRange": "=4020.0.0",
         "additionalData": {
           "headersOnly": true,
-          "branchName": "version/v4010_0_0",
+          "branchName": "version/v4020_0_0",
           "compileOptions": {
             "includePaths": [
               "include"
@@ -119,7 +119,7 @@
           }
         }
       },
-      "version": "4010.0.0"
+      "version": "4020.0.0"
     },
     {
       "dependency": {

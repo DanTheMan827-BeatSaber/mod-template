@@ -1,5 +1,5 @@
 {
-  "$schema": "https://github.com/QuestPackageManager/QPM.Package/raw/refs/heads/main/qpm.schema.json",
+  "$schema": "https://raw.githubusercontent.com/QuestPackageManager/QPM.Package/refs/heads/main/qpm.schema.json",
   "version": "0.4.0",
   "sharedDir": "shared",
   "dependenciesDir": "extern",
@@ -60,7 +60,7 @@
         "pwsh ./scripts/pull-tombstone.ps1"
       ]
     },
-    "ndk": "^27.0.0",
+    "ndk": "^27.2.12479018",
     "qmodIncludeDirs": [
       "./build",
       "./extern/libs"
@@ -72,18 +72,18 @@
   },
   "dependencies": [
     {
-      "id": "paper2_scotland2",
-      "versionRange": "^4.5.0",
+      "id": "beatsaber-hook",
+      "versionRange": "^6.3.0",
       "additionalData": {}
     },
     {
       "id": "bs-cordl",
-      "versionRange": "4010.*",
+      "versionRange": "4020.*",
       "additionalData": {}
     },
     {
-      "id": "beatsaber-hook",
-      "versionRange": "^6.3.0",
+      "id": "paper2_scotland2",
+      "versionRange": "^4.5.0",
       "additionalData": {}
     },
     {
