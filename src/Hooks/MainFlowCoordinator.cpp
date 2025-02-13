@@ -3,8 +3,8 @@
 
 #include "GlobalNamespace/MainFlowCoordinator.hpp"
 
-#include "Hooking.hpp"
-#include "Logger.hpp"
+#include "autohooks/shared/hooks.hpp"
+#include "logger.hpp"
 
 using namespace GlobalNamespace;
 

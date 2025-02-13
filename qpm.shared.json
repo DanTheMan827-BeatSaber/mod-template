@@ -73,8 +73,13 @@
     },
     "dependencies": [
       {
+        "id": "autohooks",
+        "versionRange": "^0.1.0",
+        "additionalData": {}
+      },
+      {
         "id": "beatsaber-hook",
-        "versionRange": "^6.3.0",
+        "versionRange": "^6.4.0",
         "additionalData": {}
       },
       {
@@ -99,27 +104,16 @@
   "restoredDependencies": [
     {
       "dependency": {
-        "id": "bs-cordl",
-        "versionRange": "=4020.0.0",
+        "id": "autohooks",
+        "versionRange": "=0.1.1688867040133120",
         "additionalData": {
           "headersOnly": true,
-          "branchName": "version/v4020_0_0",
-          "compileOptions": {
-            "includePaths": [
-              "include"
-            ],
-            "cppFeatures": [],
-            "cppFlags": [
-              "-DNEED_UNSAFE_CSHARP",
-              "-fdeclspec",
-              "-DUNITY_2021",
-              "-DHAS_CODEGEN",
-              "-Wno-invalid-offsetof"
-            ]
-          }
+          "overrideSoName": "libautohooks.so",
+          "branchName": "version/v0_1_1688867040133120",
+          "cmake": true
         }
       },
-      "version": "4020.0.0"
+      "version": "0.1.1688867040133120"
     },
     {
       "dependency": {
@@ -155,6 +149,30 @@
         }
       },
       "version": "0.4.0"
+    },
+    {
+      "dependency": {
+        "id": "bs-cordl",
+        "versionRange": "=4020.0.0",
+        "additionalData": {
+          "headersOnly": true,
+          "branchName": "version/v4020_0_0",
+          "compileOptions": {
+            "includePaths": [
+              "include"
+            ],
+            "cppFeatures": [],
+            "cppFlags": [
+              "-DNEED_UNSAFE_CSHARP",
+              "-fdeclspec",
+              "-DUNITY_2021",
+              "-DHAS_CODEGEN",
+              "-Wno-invalid-offsetof"
+            ]
+          }
+        }
+      },
+      "version": "4020.0.0"
     },
     {
       "dependency": {

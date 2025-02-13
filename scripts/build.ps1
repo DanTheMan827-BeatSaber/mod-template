@@ -60,10 +60,10 @@ if ($skipBuild.IsPresent) {
 }
 
 # Check if ./extern/includes/bs-cordl/version.txt exists
-if (Test-Path "./extern/includes/bs-cordl/version.txt") {
+if (Test-Path "$PSScriptRoot/../extern/includes/bs-cordl/include/version.txt") {
     # Update packageVrsion in mod.template.json using bs-cordl version.txt
     $modTemplate = Get-Content "./mod.template.json" -Raw | ConvertFrom-Json
-    $bsversion = Get-Content "./extern/includes/bs-cordl/version.txt"
+    $bsversion = Get-Content "$PSScriptRoot/../extern/includes/bs-cordl/include/version.txt"
     if (-not [string]::IsNullOrWhitespace($bsversion)) {
         Write-Output "Setting Package Version to $bsversion"
         $modTemplate.packageVersion = $bsversion

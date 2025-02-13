@@ -71,8 +71,13 @@
   },
   "dependencies": [
     {
+      "id": "autohooks",
+      "versionRange": "^0.1.0",
+      "additionalData": {}
+    },
+    {
       "id": "beatsaber-hook",
-      "versionRange": "^6.3.0",
+      "versionRange": "^6.4.0",
       "additionalData": {}
     },
     {

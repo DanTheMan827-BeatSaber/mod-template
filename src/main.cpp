@@ -1,8 +1,8 @@
 #include "main.hpp"
 
+#include "autohooks/shared/hooks.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-functions.hpp"
-#include "Hooking.hpp"
-#include "Logger.hpp"
+#include "logger.hpp"
 #include "modInfo.hpp"
 #include "scotland2/shared/modloader.h"
 
