@@ -67,7 +67,7 @@ if (Test-Path "$PSScriptRoot/../extern/includes/bs-cordl/include/version.txt") {
     if (-not [string]::IsNullOrWhitespace($bsversion)) {
         Write-Output "Setting Package Version to $bsversion"
         $modTemplate.packageVersion = $bsversion
-        $modTemplate | ConvertTo-Json -Depth 10 | Set-Content "./mod.template.json"
+        $modTemplate | ConvertTo-Json -Depth 10 | Set-Content "$PSScriptRoot/../mod.template.json"
     }
     else {
         Write-Output "Empty bs-cordl version.txt, skipping package version update."
