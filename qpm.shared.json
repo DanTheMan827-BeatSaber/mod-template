@@ -71,9 +71,7 @@
         "./build",
         "./extern/libs"
       ],
-      "qmodIncludeFiles": [
-        "./cover.png"
-      ],
+      "qmodIncludeFiles": [],
       "qmodOutput": "./MyTemplateModName.qmod"
     },
     "dependencies": [
