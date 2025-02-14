@@ -52,19 +52,11 @@ jobs:
       - name: Read info from qpm.json
         id: read_qpm_info
         run: |
-          if [ -f "qpm.shared.json" ]; then
-            NAME="$(jq -r '.config.info.name' qpm.shared.json)"
-            ID="$(jq -r '.config.info.id' qpm.shared.json)"
-            OVERRIDE_SO_NAME="$(jq -r '.config.info.additionalData.overrideSoName' qpm.shared.json)"
-            QMOD_OUTPUT_PATH="$(jq -r '.config.workspace.qmodOutput' qpm.shared.json)"
-            NDK="$(jq -r '.config.workspace.ndk' qpm.shared.json)"
-          else
-            NAME="$(jq -r '.info.name' qpm.json)"
-            ID="$(jq -r '.info.id' qpm.json)"
-            OVERRIDE_SO_NAME="$(jq -r '.info.additionalData.overrideSoName' qpm.json)"
-            QMOD_OUTPUT_PATH="$(jq -r '.workspace.qmodOutput' qpm.json)"
-            NDK="$(jq -r '.workspace.ndk' qpm.json)"
-          fi
+          NAME="$(jq -r '.info.name' qpm.json)"
+          ID="$(jq -r '.info.id' qpm.json)"
+          OVERRIDE_SO_NAME="$(jq -r '.info.additionalData.overrideSoName' qpm.json)"
+          QMOD_OUTPUT_PATH="$(jq -r '.workspace.qmodOutput' qpm.json)"
+          NDK="$(jq -r '.workspace.ndk' qpm.json)"
 
           echo "name=${NAME}" | tee -a "$GITHUB_OUTPUT"
           echo "id=${ID}" | tee -a "$GITHUB_OUTPUT"
