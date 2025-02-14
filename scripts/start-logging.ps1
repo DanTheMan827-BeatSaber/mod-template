@@ -21,7 +21,7 @@ Param(
     [Switch] $excludeHeader,
 
     [Parameter(Mandatory = $false)]
-    [String] $packageName = "com.beatgames.beatsaber"
+    [String] $packageId = "com.beatgames.beatsaber"
 )
 
 # Display help information if requested
@@ -40,8 +40,14 @@ if ($help -eq $true) {
     exit
 }
 
+# Check if package_id.txt exists and use that as the package name
+if (Test-Path "package_id.txt") {
+    $packageId = Get-Content "package_id.txt"
+    Write-Output "Using package name from package_id.txt: $packageId"
+}
+
 # Get the process ID of Beat Saber
-$bspid = adb shell pidof "$packageName"
+$bspid = adb shell pidof "$packageId"
 $command = "adb logcat "
 
 # Retry getting the process ID if not found
@@ -49,7 +55,7 @@ if ($all -eq $false) {
     $loops = 0
     while ([string]::IsNullOrEmpty($bspid) -and $loops -lt 3) {
         Start-Sleep -Milliseconds 100
-        $bspid = adb shell pidof "$packageName"
+        $bspid = adb shell pidof "$packageId"
         $loops += 1
     }
 

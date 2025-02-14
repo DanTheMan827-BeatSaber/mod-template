@@ -12,7 +12,7 @@ Param(
     [Switch] $help,
 
     [Parameter(Mandatory = $false)]
-    [String] $packageName = "com.beatgames.beatsaber"
+    [String] $packageId = "com.beatgames.beatsaber"
 )
 
 # Display help information if requested
@@ -26,13 +26,19 @@ if ($help -eq $true) {
     exit
 }
 
+# Check if package_id.txt exists and use that as the package name
+if (Test-Path "package_id.txt") {
+    $packageId = Get-Content "package_id.txt"
+    Write-Output "Using package name from package_id.txt: $packageId"
+}
+
 $global:currentDate = get-date
 $global:recentDate = $Null
 $global:recentTombstone = $Null
 
 # Loop through possible tombstone files to find the most recent one
 for ($i = 0; $i -lt 3; $i++) {
-    $stats = & adb shell stat "/sdcard/Android/data/$packageName/files/tombstone_0$i"
+    $stats = & adb shell stat "/sdcard/Android/data/$packageId/files/tombstone_0$i"
     $date = (Select-String -Input $stats -Pattern "(?<=Modify: )\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?=.\d{9})").Matches.Value
     if ([string]::IsNullOrEmpty($date)) {
         Write-Output "Failed to pull tombstone, exiting..."
@@ -55,7 +61,7 @@ for ($i = 0; $i -lt 3; $i++) {
 Write-Output "Latest tombstone was tombstone_0$recentTombstone"
 
 # Pull the most recent tombstone file
-& adb pull "/sdcard/Android/data/$packageName/files/tombstone_0$recentTombstone" "$fileName"
+& adb pull "/sdcard/Android/data/$packageId/files/tombstone_0$recentTombstone" "$fileName"
 
 # Analyze the tombstone file if requested
 if ($analyze) {
