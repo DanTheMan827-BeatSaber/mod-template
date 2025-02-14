@@ -40,7 +40,6 @@
           "pwsh ./common-stuff/scripts/make-hooking.ps1"
         ],
         "qmod": [
-          "qpm s build",
           "qpm qmod zip"
         ],
         "rebuild": [
