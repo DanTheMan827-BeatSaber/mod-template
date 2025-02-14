@@ -61,13 +61,20 @@ if ($skipBuild.IsPresent) {
 
 # Check if ./extern/includes/bs-cordl/version.txt exists
 if (Test-Path "$PSScriptRoot/../extern/includes/bs-cordl/include/version.txt") {
-    # Update packageVrsion in mod.template.json using bs-cordl version.txt
-    $modTemplate = Get-Content "./mod.template.json" -Raw | ConvertFrom-Json
+    # Update packageVersion in mod.template.json using bs-cordl version.txt
+    $modTemplateRaw = Get-Content "$PSScriptRoot/../mod.template.json" -Raw
+    $modTemplateOriginal = $modTemplateRaw | ConvertFrom-Json
+    $modTemplate = $modTemplateRaw | ConvertFrom-Json
     $bsversion = Get-Content "$PSScriptRoot/../extern/includes/bs-cordl/include/version.txt"
     if (-not [string]::IsNullOrWhitespace($bsversion)) {
         Write-Output "Setting Package Version to $bsversion"
         $modTemplate.packageVersion = $bsversion
-        $modTemplate | ConvertTo-Json -Depth 10 | Set-Content "$PSScriptRoot/../mod.template.json"
+
+        # Write the updated mod.template.json if the contents have changed
+        if (($modTemplate | ConvertTo-Json -Depth 32) -ne ($modTemplateOriginal | ConvertTo-Json -Depth 32)) {
+            Write-Output "Writing updated mod.template.json"
+            $modTemplate | ConvertTo-Json -Depth 32 | Set-Content -Path "$PSScriptRoot/../mod.template.json"
+        }
     }
     else {
         Write-Output "Empty bs-cordl version.txt, skipping package version update."
