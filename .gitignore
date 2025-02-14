@@ -69,3 +69,6 @@ extern.cmake
 mod.json.schema
 include/Hooking.hpp
 include/git-info.h
+
+# Includes
+!user_includes.txt
