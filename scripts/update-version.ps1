@@ -1,15 +1,28 @@
 param (
-    [string]$version = (Get-Content -Path "$PSScriptRoot/../version.txt" -Raw).Trim()
+    [switch]$restore
 )
 
-# Read the mod.template.json file
-$json = Get-Content -Path "$PSScriptRoot/../mod.template.json" -Raw | ConvertFrom-Json
+# Read version.txt
+$version = Get-Content -Path "$PSScriptRoot/../version.txt"
 
-# Update the version number in the JSON object
-$json.version = $version
+# Path to the mod.template.json file
+$jsonTemplatePath = "$PSScriptRoot/../mod.template.json"
+$jsonTemplateBackupPath = "$PSScriptRoot/../mod.template.json.bak"
 
-# Convert the JSON object back to a string
-$jsonString = $json | ConvertTo-Json
+if ($restore) {
+    if (Test-Path -Path $jsonTemplateBackupPath) {
+        if (Test-Path -Path $jsonTemplatePath) {
+            Remove-Item -Path $jsonTemplatePath
+        }
+        Move-Item -Path $jsonTemplateBackupPath -Destination $jsonTemplatePath
+    }
+}
+else {
+    if (-not (Test-Path -Path $jsonTemplateBackupPath)) {
+        Move-Item -Path $jsonTemplatePath -Destination $jsonTemplateBackupPath
+    }
 
-# Write the updated JSON string back to the mod.template.json file
-Set-Content -Path "mod.template.json" -Value $jsonString
+    $jsonContent = Get-Content -Path $jsonTemplateBackupPath -Raw | ConvertFrom-Json
+    $jsonContent.version = $version
+    $jsonContent | ConvertTo-Json -Depth 32 | Set-Content -Path $jsonTemplatePath
+}

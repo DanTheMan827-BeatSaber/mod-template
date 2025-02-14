@@ -41,8 +41,8 @@
       "qmod": [
         "qpm s build",
         "qpm s update-version",
-        "qpm qmod zip",
-        "qpm s update-version -- --version ${version}"
+        "qpm qmod zip --skip_build",
+        "qpm s update-version -- -restore"
       ],
       "rebuild": [
         "qpm s deepclean",
