@@ -19,6 +19,11 @@ on:
         description: "Enter the Mod Description"
         required: true
         type: string
+      ModVersion:
+        description: "Enter the Mod Version"
+        required: true
+        type: string
+        default: "0.1.0"
 
 permissions:
   contents: write
@@ -49,7 +54,7 @@ jobs:
       - name: Run configure-template.ps1
         shell: pwsh
         run: |
-          ./configure-template.ps1 -ModId "${{ inputs.ModId }}" -ModName "${{ inputs.ModName }}" -ModAuthor "${{ inputs.ModAuthor }}" -ModDescription "${{ inputs.ModDescription }}"
+          ./configure-template.ps1 -ModId "${{ inputs.ModId }}" -ModName "${{ inputs.ModName }}" -ModAuthor "${{ inputs.ModAuthor }}" -ModDescription "${{ inputs.ModDescription }}" -ModVersion "${{ inputs.ModVersion }}"
 
       - name: Commit changes
         run: |

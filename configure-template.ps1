@@ -2,23 +2,32 @@ param (
     [string]$ModId,
     [string]$ModName,
     [string]$ModAuthor,
-    [string]$ModDescription
+    [string]$ModDescription,
+    [string]$ModVersion
 )
 
-function Prompt-For-Input($prompt, $allowSpaces = $true) {
+function Prompt-For-Input($prompt, $allowSpaces = $true, $suggestedInput = $null) {
     do {
-        $input = Read-Host $prompt
-        $input = $input.Trim()
-        if (-not $allowSpaces -and $input -match '\s') {
-            $suggestedInput = $input -replace '\s', '-'
+        if ($suggestedInput) {
+            $promptValue = Read-Host "$prompt (default: $suggestedInput)"
+        }
+        else {
+            $promptValue = Read-Host $prompt
+        }
+        $promptValue = $promptValue.Trim()
+        if (-not $allowSpaces -and $promptValue -match '\s') {
+            $suggestedInput = $promptValue -replace '\s', '-'
             Write-Host "Input cannot contain spaces. Please try again, or press Enter to use the suggested input."
-            $input = Read-Host "$prompt (default: $suggestedInput)"
-            if ([string]::IsNullOrWhiteSpace($input)) {
-                $input = $suggestedInput
+            $promptValue = Read-Host "$prompt (default: $suggestedInput)"
+            if ([string]::IsNullOrWhiteSpace($promptValue)) {
+                $promptValue = $suggestedInput
             }
         }
-    } while ([string]::IsNullOrWhiteSpace($input))
-    return $input
+        elseif ([string]::IsNullOrWhiteSpace($promptValue) -and $suggestedInput) {
+            $promptValue = $suggestedInput
+        }
+    } while ([string]::IsNullOrWhiteSpace($promptValue))
+    return $promptValue
 }
 
 # Trim whitespace from all parameters
@@ -36,6 +45,9 @@ if ($ModAuthor) {
 if ($ModDescription) {
     $ModDescription = $ModDescription.Trim()
 }
+if ($ModVersion) {
+    $ModVersion = $ModVersion.Trim()
+}
 
 # Check if parameters are provided, if not prompt the user for input
 if (-not $ModId) {
@@ -49,6 +61,9 @@ if (-not $ModAuthor) {
 }
 if (-not $ModDescription) {
     $ModDescription = Prompt-For-Input "Enter the Mod Description"
+}
+if (-not $ModVersion) {
+    $ModVersion = Prompt-For-Input "Enter the Mod Version" $false "0.1.0"
 }
 
 # Store the values in variables.
@@ -92,6 +107,18 @@ foreach ($file in $filesToProcess) {
         # Output the file path to indicate that it has been processed
         Write-Host "Processed: $filePath"
     }
+}
+
+# Update qpm.json with the version
+$qpmJson = Get-Content -Path "qpm.json" | ConvertFrom-Json
+$qpmJson.info.version = $ModVersion
+$qpmJson | ConvertTo-Json -Depth 32 | Set-Content -Path "qpm.json"
+
+# Update qpm.shared.json with the version if it exists
+if (Test-Path -Path "qpm.shared.json") {
+    $qpmJson = Get-Content -Path "qpm.shared.json" | ConvertFrom-Json
+    $qpmJson.config.info.version = $ModVersion
+    $qpmJson | ConvertTo-Json -Depth 32 | Set-Content -Path "qpm.shared.json"
 }
 
 # Output a message indicating that the script has completed
