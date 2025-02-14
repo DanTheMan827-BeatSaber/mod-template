@@ -41,7 +41,9 @@
         ],
         "qmod": [
           "qpm s build",
-          "qpm qmod zip"
+          "qpm s update-version",
+          "qpm qmod zip",
+          "qpm s update-version -- --version ${version}"
         ],
         "rebuild": [
           "qpm s deepclean",
@@ -59,6 +61,9 @@
         ],
         "tomb": [
           "pwsh ./scripts/pull-tombstone.ps1"
+        ],
+        "update-version": [
+          "pwsh ./scripts/update-version.ps1 $0:?"
         ]
       },
       "ndk": "^27.2.12479018",

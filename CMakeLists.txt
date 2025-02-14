@@ -18,6 +18,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/qpm.cmake)
 
 set(GIT_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/include/git-info.h)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/git.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/write-version.cmake)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "RELEASE" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
         # Better optimizations
