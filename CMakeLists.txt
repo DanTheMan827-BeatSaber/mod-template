@@ -77,4 +77,5 @@ RECURSE_FILES(src_inline_hook_beatsaber_hook_local_extra_cpp ${EXTERN_DIR}/inclu
 
 target_sources(${COMPILE_ID} PRIVATE ${src_inline_hook_beatsaber_hook_local_extra_c})
 target_sources(${COMPILE_ID} PRIVATE ${src_inline_hook_beatsaber_hook_local_extra_cpp})
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/assets.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/user-includes.cmake")
