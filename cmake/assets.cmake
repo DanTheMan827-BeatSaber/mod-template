@@ -1,4 +1,5 @@
-# credit goes to https://github.com/Lauriethefish for this
+# credit goes to https://github.com/Lauriethefish for the original version
+
 # Directory where our arbitrary asset files are stored
 set(ASSETS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
@@ -9,16 +10,133 @@ set(ASSET_BINARIES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/binaryAssets)
 set(PREPENDED_ASSETS_DIR ${CMAKE_CURRENT_BINARY_DIR}/prependedAssets)
 set(ASSET_HEADER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include/assets.hpp")
 
-# Define a macro which we will use for defining the symbols to access our asset files below
-set(ASSET_HEADER_DATA
-    "#pragma once
+# This variable will accumulate all extern declarations.
+set(EXTERN_DECLARATIONS "")
+
+if(EXISTS ${ASSETS_DIRECTORY})
+    # Create necessary directories.
+    file(MAKE_DIRECTORY ${ASSET_BINARIES_DIRECTORY})
+    file(MAKE_DIRECTORY ${PREPENDED_ASSETS_DIR})
+
+    # Recursively find all files (with relative paths) in the assets directory.
+    file(GLOB_RECURSE ASSETS RELATIVE ${ASSETS_DIRECTORY} "${ASSETS_DIRECTORY}/*")
+    set(BINARY_ASSET_FILES "")
+
+    # Variable to accumulate the asset declarations (for user consumption).
+    set(ASSET_DECLARATIONS "")
+    set(INDENT_STRING "    ")
+
+    foreach(REL_FILE IN LISTS ASSETS)
+        # Full path to the source asset.
+        set(SRC_FILE "${ASSETS_DIRECTORY}/${REL_FILE}")
+
+        # Skip directories.
+        if(IS_DIRECTORY ${SRC_FILE})
+            continue()
+        endif()
+
+        # Get the file size.
+        file(SIZE "${SRC_FILE}" FILE_SIZE)
+
+        message("-- Including asset: ${REL_FILE}")
+
+        # Create matching subdirectories in the prepended assets folder.
+        get_filename_component(REL_DIR ${REL_FILE} DIRECTORY)
+        if(NOT REL_DIR STREQUAL "")
+            file(MAKE_DIRECTORY "${PREPENDED_ASSETS_DIR}/${REL_DIR}")
+        endif()
+
+        # Create a prepended copy of the asset (with 32 extra bytes at the beginning).
+        add_custom_command(
+            OUTPUT "${PREPENDED_ASSETS_DIR}/${REL_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E echo_append "                                " > "${PREPENDED_ASSETS_DIR}/${REL_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E cat "${SRC_FILE}" >> "${PREPENDED_ASSETS_DIR}/${REL_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E echo_append " " >> "${PREPENDED_ASSETS_DIR}/${REL_FILE}"
+            DEPENDS "${SRC_FILE}"
+        )
+
+        # Create matching subdirectories in the binary assets folder.
+        if(NOT REL_DIR STREQUAL "")
+            file(MAKE_DIRECTORY "${ASSET_BINARIES_DIRECTORY}/${REL_DIR}")
+        endif()
+
+        # Define the output object file (with a .o extension appended).
+        set(OUTPUT_OBJ "${ASSET_BINARIES_DIRECTORY}/${REL_FILE}.o")
+
+        # Use llvm-objcopy to create an object file that embeds the asset.
+        add_custom_command(
+            OUTPUT "${OUTPUT_OBJ}"
+            COMMAND ${CMAKE_OBJCOPY} "${REL_FILE}" "${OUTPUT_OBJ}" --input-target binary --output-target elf64-aarch64 --set-section-flags binary=strings
+            DEPENDS "${PREPENDED_ASSETS_DIR}/${REL_FILE}"
+            WORKING_DIRECTORY "${PREPENDED_ASSETS_DIR}"
+        )
+        list(APPEND BINARY_ASSET_FILES "${OUTPUT_OBJ}")
+
+        # Generate a mangled symbol name by replacing non-alphanumeric characters with underscores.
+        string(REGEX REPLACE "[^a-zA-Z0-9]" "_" FULL_SYMBOL ${REL_FILE})
+
+        # Compute a local asset name from the file name (sanitized).
+        get_filename_component(FILE_NAME ${REL_FILE} NAME)
+        string(REGEX REPLACE "[^a-zA-Z0-9]" "_" LOCAL_NAME ${FILE_NAME})
+
+        # Append the extern declarations for this asset inside __IncludedAssetExterns.
+        set(EXTERN_DECLARATIONS "${EXTERN_DECLARATIONS}extern \"C\" uint8_t _binary_${FULL_SYMBOL}_start[];\n")
+        set(EXTERN_DECLARATIONS "${EXTERN_DECLARATIONS}extern \"C\" uint8_t _binary_${FULL_SYMBOL}_end[];\n")
+        set(EXTERN_DECLARATIONS "${EXTERN_DECLARATIONS}extern \"C\" uint8_t _binary_${FULL_SYMBOL}_size[];\n")
+
+        # Set the indentation for the asset declaration code.
+        set(INDENT "")
+        set(NAMESPACE_OPEN "")
+        set(NAMESPACE_CLOSE "")
+
+        # Build the asset declaration code directly.
+        # If the asset is in a subfolder, wrap it in nested namespaces.
+        if(NOT REL_DIR STREQUAL "")
+            string(REPLACE "/" ";" DIR_LIST ${REL_DIR})
+
+            foreach(DIR IN LISTS DIR_LIST)
+                string(REGEX REPLACE "[^a-zA-Z0-9]" "_" NS ${DIR})
+                set(NAMESPACE_OPEN "${NAMESPACE_OPEN}\n${INDENT}namespace ${NS} {")
+                set(NAMESPACE_CLOSE "${INDENT}}  // namespace ${NS}\n${NAMESPACE_CLOSE}")
+                set(INDENT "${INDENT}${INDENT_STRING}")
+            endforeach()
+        endif()
+
+        set(ASSET_DECLARATION "${NAMESPACE_OPEN}
+${INDENT}/**
+${INDENT} * Binary asset representing the file \"${REL_FILE}\".
+${INDENT} *
+${INDENT} * This asset was embedded as a binary resource.
+${INDENT} */
+${INDENT}const IncludedAsset ${LOCAL_NAME} {
+${INDENT}    __IncludedAssetExterns::_binary_${FULL_SYMBOL}_start,
+${INDENT}    __IncludedAssetExterns::_binary_${FULL_SYMBOL}_end
+${INDENT}};
+${NAMESPACE_CLOSE}")
+
+        set(ASSET_DECLARATIONS "${ASSET_DECLARATIONS}${ASSET_DECLARATION}")
+    endforeach()
+
+    # Indent each line of the asset declarations including the first line.
+    string(REPLACE "\n" "\n${INDENT_STRING}" ASSET_DECLARATIONS "${ASSET_DECLARATIONS}")
+
+    # Trim excess whitespace from the asset declarations.
+    string(STRIP "${ASSET_DECLARATIONS}" ASSET_DECLARATIONS)
+
+
+    # Indent each line of the extern declarations including the first line.
+    string(REPLACE "\n" "\n${INDENT_STRING}" EXTERN_DECLARATIONS "${EXTERN_DECLARATIONS}")
+
+    # Trim excess whitespace from the extern declarations.
+    string(STRIP "${EXTERN_DECLARATIONS}" EXTERN_DECLARATIONS)
+
+    set(ASSET_HEADER_DATA "#pragma once
 
 #include <string_view>
 
 #include \"beatsaber-hook/shared/utils/typedefs.h\"
 
 struct IncludedAsset {
-
     IncludedAsset(uint8_t* start, uint8_t* end) : array(reinterpret_cast<Array<uint8_t>*>(start)) {
         array->klass = nullptr;
         array->monitor = nullptr;
@@ -32,79 +150,58 @@ struct IncludedAsset {
         return array;
     }
 
-    operator std::string_view() const { return {reinterpret_cast<char*>(array->_values), array->get_Length()}; }
+    operator std::string_view() const {
+        return {reinterpret_cast<char*>(array->_values), array->get_Length()};
+    }
 
-    operator std::span<uint8_t>() const { return {array->_values, array->get_Length()}; }
+    operator std::span<uint8_t>() const {
+        return {array->_values, array->get_Length()};
+    }
 
     void init() const {
-        if (!array->klass)
+        if (!array->klass) {
             array->klass = classof(Array<uint8_t>*);
+        }
     }
 
    private:
     Array<uint8_t>* array;
 };
 
-#define DECLARE_FILE(name)                       \\
-    extern \"C\" uint8_t _binary_##name##_start[]; \\
-    extern \"C\" uint8_t _binary_##name##_end[];   \\
-    const IncludedAsset name {_binary_##name##_start, _binary_##name##_end};
+#define PNG_SPRITE(name) BSML::Utilities::LoadSpriteRaw(static_cast<ArrayW<uint8_t>>(IncludedAssets::name##_png))
 
-#define PNG_SPRITE(name) \\
-    BSML::Utilities::LoadSpriteRaw(static_cast<ArrayW<uint8_t>>(IncludedAssets::name##_png))
+/**
+ * @brief Contains raw asset symbols generated by llvm-objcopy.
+ * This namespace is private and should not be used directly.
+ */
+namespace __IncludedAssetExterns {
+    ${EXTERN_DECLARATIONS}
+}  // namespace __IncludedAssetExterns
 
 namespace IncludedAssets {
+    ${ASSET_DECLARATIONS}
+}  // namespace IncludedAssets
 ")
 
-if(EXISTS ${ASSETS_DIRECTORY})
-    file(MAKE_DIRECTORY ${ASSET_BINARIES_DIRECTORY})
-    file(MAKE_DIRECTORY ${PREPENDED_ASSETS_DIR})
-    file(GLOB ASSETS LIST_DIRECTORIES false ${ASSETS_DIRECTORY}/*)
-
-    # Iterate through each file in the assets directory. TODO: This could be recursive
-    foreach(FILE IN LISTS ASSETS)
-        message("-- Including asset: ${FILE}")
-        get_filename_component(ASSET ${FILE} NAME) # Find the asset's file name
-
-        # make a copy of the file with 32 bytes added in the build dir
-        add_custom_command(
-            OUTPUT ${PREPENDED_ASSETS_DIR}/${ASSET}
-            COMMAND ${CMAKE_COMMAND} -E echo_append "                                " > ${PREPENDED_ASSETS_DIR}/${ASSET}
-            COMMAND ${CMAKE_COMMAND} -E cat ${ASSETS_DIRECTORY}/${ASSET} >> ${PREPENDED_ASSETS_DIR}/${ASSET}
-            COMMAND ${CMAKE_COMMAND} -E echo_append " " >> ${PREPENDED_ASSETS_DIR}/${ASSET}
-            DEPENDS ${ASSETS_DIRECTORY}/${ASSET}
-        )
-
-        set(OUTPUT_FILE "${ASSET_BINARIES_DIRECTORY}/${ASSET}.o") # Save our asset in the asset binaries directory
-
-        # Use llvm-objcopy to create an object file that stores our binary asset
-        # The resulting file contains 3 symbols: _binary_<file_name>_start, _binary_<file_name>_size and _binary_<file_name>_end
-        # We only use the first two
-        add_custom_command(
-            OUTPUT ${OUTPUT_FILE}
-            COMMAND ${CMAKE_OBJCOPY} ${ASSET} ${OUTPUT_FILE} --input-target binary --output-target elf64-aarch64 --set-section-flags binary=strings
-            DEPENDS ${PREPENDED_ASSETS_DIR}/${ASSET}
-            WORKING_DIRECTORY ${PREPENDED_ASSETS_DIR}
-        )
-        list(APPEND BINARY_ASSET_FILES ${OUTPUT_FILE})
-
-        # Find the correct objcopy symbol name, this is always the file name with any non-alphanumeric characters replaced with _
-        string(REGEX REPLACE "[^a-zA-Z0-9]" "_" FIXED_ASSET ${ASSET})
-
-        # Add to our assets header
-        set(ASSET_HEADER_DATA "${ASSET_HEADER_DATA}    DECLARE_FILE(${FIXED_ASSET})\r\n")
-    endforeach()
-
-    set(ASSET_HEADER_DATA "${ASSET_HEADER_DATA}}\r\n")
-
-    # check if at least 1 asset file, otherwise ignore
     list(LENGTH BINARY_ASSET_FILES COUNT)
-
     if(${COUNT} GREATER 0)
-        # Generate the assets header file
-        file(GENERATE OUTPUT ${ASSET_HEADER_PATH} CONTENT "${ASSET_HEADER_DATA}")
+        # Check if the output file already exists.
+        if(EXISTS ${ASSET_HEADER_PATH})
+            file(READ ${ASSET_HEADER_PATH} CURRENT_ASSET_HEADER)
+        else()
+            set(CURRENT_ASSET_HEADER "")
+        endif()
 
-        # Add our assets files to the final SO
+        # If the contents of the asset header have changed, write the new contents.
+        if(NOT "${CURRENT_ASSET_HEADER}" STREQUAL "${ASSET_HEADER_DATA}")
+            message("-- Writing '${ASSET_HEADER_PATH}'")
+            file(WRITE ${ASSET_HEADER_PATH} "${ASSET_HEADER_DATA}")
+        else()
+            message("-- '${ASSET_HEADER_PATH}' is up to date.")
+        endif()
+
+
+        # Create an object library for the asset files so they are linked into your final binary.
         add_library(asset_files OBJECT ${BINARY_ASSET_FILES})
         set_target_properties(asset_files PROPERTIES LINKER_LANGUAGE CXX)
         target_link_libraries(${COMPILE_ID} PRIVATE asset_files ${BINARY_ASSET_FILES})
