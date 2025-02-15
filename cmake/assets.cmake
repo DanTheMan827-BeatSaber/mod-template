@@ -203,13 +203,19 @@ namespace IncludedAssets {
             message("-- '${ASSET_HEADER_PATH}' is up to date.")
         endif()
 
-
         # Create an object library for the asset files so they are linked into your final binary.
         add_library(asset_files OBJECT ${BINARY_ASSET_FILES})
         set_target_properties(asset_files PROPERTIES LINKER_LANGUAGE CXX)
         target_link_libraries(${COMPILE_ID} PRIVATE asset_files ${BINARY_ASSET_FILES})
+    else()
+        if(EXISTS ${ASSET_HEADER_PATH})
+            message("-- Removing '${ASSET_HEADER_PATH}' as no assets have been found in '${ASSETS_DIRECTORY}'")
+            file(REMOVE ${ASSET_HEADER_PATH})
+        endif()
     endif()
 else()
-    message("-- Removing '${ASSET_HEADER_PATH}' as no assets have been found in '${ASSETS_DIRECTORY}'")
-    file(REMOVE ${ASSET_HEADER_PATH})
+    if(EXISTS ${ASSET_HEADER_PATH})
+        message("-- Removing '${ASSET_HEADER_PATH}' as the directory '${ASSETS_DIRECTORY}' does not exist")
+        file(REMOVE ${ASSET_HEADER_PATH})
+    endif()
 endif()
