@@ -91,6 +91,11 @@
         "additionalData": {}
       },
       {
+        "id": "mmkay",
+        "versionRange": "^0.1.0",
+        "additionalData": {}
+      },
+      {
         "id": "paper2_scotland2",
         "versionRange": "^4.5.0",
         "additionalData": {}
@@ -136,6 +141,17 @@
         }
       },
       "version": "4.5.0"
+    },
+    {
+      "dependency": {
+        "id": "mmkay",
+        "versionRange": "=0.1.0",
+        "additionalData": {
+          "headersOnly": true,
+          "branchName": "version/v0_1_0"
+        }
+      },
+      "version": "0.1.0"
     },
     {
       "dependency": {

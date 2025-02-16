@@ -90,6 +90,11 @@
       "additionalData": {}
     },
     {
+      "id": "mmkay",
+      "versionRange": "^0.1.0",
+      "additionalData": {}
+    },
+    {
       "id": "paper2_scotland2",
       "versionRange": "^4.5.0",
       "additionalData": {}
