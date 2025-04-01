@@ -7,7 +7,7 @@
   "author": "MyTemplateModAuthor",
   "version": "${version}",
   "packageId": "com.beatgames.beatsaber",
-  "packageVersion": "1.40.3_4614",
+  "packageVersion": "1.40.4_5283",
   "description": "MyTemplateModDescription",
   "dependencies": [],
   "modFiles": [
