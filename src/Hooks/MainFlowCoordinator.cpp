@@ -12,6 +12,8 @@ using namespace GlobalNamespace;
 /// It serves as a basic example of how to hook a method.
 ///
 /// The original method is called after this hook with no changes.
+///
+/// MainFlowCoordinator::DidActivate is a method that is called when the MainFlowCoordinator is activated as the main menu is shown.
 MAKE_LATE_HOOK_MATCH(
     MainFlowCoordinator_DidActivate,
     &MainFlowCoordinator::DidActivate,
