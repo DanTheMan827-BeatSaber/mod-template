@@ -86,12 +86,12 @@
     },
     {
       "id": "bs-cordl",
-      "versionRange": "4004.*",
+      "versionRange": "4005.*",
       "additionalData": {}
     },
     {
       "id": "mmkay",
-      "versionRange": "^0.1.0",
+      "versionRange": "^0.2.1",
       "additionalData": {}
     },
     {
