@@ -183,6 +183,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Notify webhook
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: "https://discord.com/api/webhooks/1373774847338872912/0yczHJQwjE4x-tkewFJQdQR4jhh4HD_-vaQyLbO74hImwvRKOP813IxumNFS_ItLijwR"
+          content: "New build"
+          username: "${{ github.repository }}"
+          avatar-url: "http://github.com/${{ env.CI_ACTOR }}.png"
+
       - name: Generate release body
         run: |
           BODY_FILE="body.txt"
