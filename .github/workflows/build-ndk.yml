@@ -145,6 +145,15 @@ jobs:
             ./debug_${{ needs.qpm_info.outputs.override_so_name }}
             ${{ needs.qpm_info.outputs.qmod_output_path }}
 
+      - name: Notify webhook
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: "https://discord.com/api/webhooks/1373774847338872912/0yczHJQwjE4x-tkewFJQdQR4jhh4HD_-vaQyLbO74hImwvRKOP813IxumNFS_ItLijwR"
+          content: "New build"
+          filename: ${{ needs.qpm_info.outputs.qmod_output_path }}
+          username: "${{ github.repository }}"
+          avatar-url: "http://github.com/${{ env.CI_ACTOR }}.png"
+
   release:
     runs-on: ubuntu-latest
     needs: [qpm_info, build]
@@ -182,15 +191,6 @@ jobs:
             ./output/*.qmod
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Notify webhook
-        uses: tsickert/discord-webhook@v7.0.0
-        with:
-          webhook-url: "https://discord.com/api/webhooks/1373774847338872912/0yczHJQwjE4x-tkewFJQdQR4jhh4HD_-vaQyLbO74hImwvRKOP813IxumNFS_ItLijwR"
-          content: "New build"
-          filename: ${{ needs.qpm_info.outputs.qmod_output_path }}
-          username: "${{ github.repository }}"
-          avatar-url: "http://github.com/${{ env.CI_ACTOR }}.png"
 
       - name: Generate release body
         run: |
