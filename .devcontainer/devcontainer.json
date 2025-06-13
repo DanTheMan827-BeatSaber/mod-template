@@ -1,6 +1,6 @@
 {
   "name": "QPM",
-  "image": "ghcr.io/dantheman827/qpm-docker:master",
+  "image": "ghcr.io/dantheman827/qpm-docker:alpine",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "username": "codespace",
