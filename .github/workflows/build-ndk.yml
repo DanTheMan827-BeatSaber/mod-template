@@ -141,6 +141,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
+      id-token: write
       attestations: write
 
     steps:
